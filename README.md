@@ -1,10 +1,11 @@
-# Contribution [#]: [Issue Title]
+# Contribution 1: [Feature request] Image zooming #701
+
 
 **Contribution Number:** 1
 
 **Student:** Yuanncheng Cao
 
-**Issue:** [GitHub issue link]  
+**Issue:** [GitHub issue link](https://github.com/session-foundation/session-desktop/issues/701)
 
 **Status:** Phase I Complete
 
@@ -12,9 +13,18 @@
 
 ## Why I Chose This Issue
 
-[1-2 paragraphs explaining why this issue interests you, how it matches your skills/learning goals, what you hope to learn]
+I chose issue #701 because it is a user-facing feature request that improves the usability of Session Desktop when viewing image attachments. Many users share screenshots containing text, and the current image viewer can make that text difficult to read without downloading the image and opening it in another application. Adding zoom functionality would provide a smoother and more intuitive user experience.
 
----
+This issue aligns well with my experience building frontend applications using React and TypeScript. The maintainer also mentioned that the work should be done in the Lightbox component, which provides a clear starting point and makes the scope manageable for a first open-source contribution.
+
+I'm interested in this issue because:
+1. I have experience working with React component state, event handling, and user interface interactions.
+2. The feature is self-contained within the image viewing experience, making it a good opportunity to learn the Session Desktop codebase.
+3. It directly impacts user experience and solves a practical problem that users have reported.
+
+From reading the issue discussion, I understand that the current behavior automatically scales images to fit the window, which can make text in screenshots difficult to read. The proposed solution is to add zoom functionality within the Lightbox so users can inspect images at full size without leaving the application.
+
+Through this contribution, I hope to learn more about Session Desktop's frontend architecture, image rendering workflow, and the process of collaborating with maintainers through code reviews and pull requests.
 
 ## Understanding the Issue
 
