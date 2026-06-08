@@ -1,8 +1,11 @@
 # Contribution [#]: [Issue Title]
 
 **Contribution Number:** 1
+
 **Student:** Yuanncheng Cao
+
 **Issue:** [GitHub issue link]  
+
 **Status:** Phase I Complete
 
 ---
