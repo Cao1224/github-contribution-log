@@ -7,7 +7,7 @@
 
 **Issue:** [GitHub issue link](https://github.com/session-foundation/session-desktop/issues/701)
 
-**Status:** Phase I Complete
+**Status:** Phase II Complete
 
 ---
 
@@ -30,19 +30,19 @@ Through this contribution, I hope to learn more about Session Desktop's frontend
 
 ### Problem Description
 
-[In your own words, what's broken or missing?]
+Currently, images opened in Session are automatically resized to fit the Lightbox window. This works well for most images, but images containing text can become difficult to read because the displayed size is too small. Users often have to maximize the application window or download the image and open it in an external viewer to inspect the content.
 
 ### Expected Behavior
 
-[What should happen?]
+Users should be able to zoom in when viewing an image in the Lightbox. Clicking the image could toggle between "fit to screen" and "actual size" modes, allowing users to inspect screenshots and text-heavy images without leaving the application. The image should return to the original fit-to-screen view when clicked again.
 
 ### Current Behavior
 
-[What actually happens?]
+Images displayed in the Lightbox are always scaled to fit the current window size. Clicking an opened image has no effect, and there is no built-in zoom capability. As a result, text inside screenshots or other detailed images may be unreadable unless the user enlarges the window or opens the image externally.
 
 ### Affected Components
 
-[Which parts of the codebase are involved?]
+The issue primarily affects the Lightbox component, which is responsible for displaying images and attachments in an enlarged view. The zoom interaction and image scaling behavior will likely need to be implemented within this component.
 
 ---
 
@@ -50,19 +50,32 @@ Through this contribution, I hope to learn more about Session Desktop's frontend
 
 ### Environment Setup
 
-[Notes on setting up your local development environment - challenges you faced, how you solved them]
+I set up the Session Desktop development environment on macOS. During the setup process, I encountered several issues with missing dependencies and version mismatches.
+
+* Installed `pnpm` and enabled it through Corepack to manage project dependencies.
+* Installed `CMake`, which was required to build native modules such as `libsession_util_nodejs`. The installation initially failed because of a Homebrew permission issue related to Docker, which I resolved by fixing the directory ownership.
+* Installed and configured `nvm` to manage Node.js versions and ensure compatibility with the project's required Node version.
+Verified that Xcode Command Line Tools were installed and rebuilt the dependencies successfully.
+
+After resolving these issues, I was able to run `pnpm install`, build the project successfully, and launch multiple Session instances using separate profiles.
 
 ### Steps to Reproduce
 
-1. [Step 1]
-2. [Step 2]
-3. [Observed result]
+1. Create two Session accounts and establish a conversation between them. I used two accounts because image attachments are only available after the recipient accepts the conversation request. 
+2. 3. Send an image (for example, a screenshot containing text) from one account to the other. When the recipient receives the first image, it displays **"Click to download media"** and prompts:
+```text
+Would you like to automatically download all files from [contact]?
+```
+Select **Yes** so that the image can be downloaded and viewed.
+
+3. Open the image in the Lightbox view. The interface only provides two controls: a close button and a download button. The image is scaled to fit the window, and there is currently no way to zoom in using the mouse or by clicking on the image.
+4. Images are always resized to fit the current window. Screenshots containing text can be difficult to read, and users cannot zoom in within the application. To view the image at full size, they must download it and open it in an external image viewer.
 
 ### Reproduction Evidence
 
 - **Commit showing reproduction:** [Link to commit in your fork]
 - **Screenshots/logs:** [If applicable]
-- **My findings:** [What you discovered during reproduction]
+- **My findings:** The image displayed in the Lightbox is automatically scaled to fit the current window size. This behavior makes screenshots or images containing text difficult to read. Users currently have to maximize the application window or download the image and open it in an external viewer to inspect the image at full size. Based on feedback from a collaborator, the functionality should likely be implemented in the **Lightbox component**.
 
 ---
 
