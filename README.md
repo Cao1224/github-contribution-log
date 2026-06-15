@@ -73,8 +73,10 @@ Select **Yes** so that the image can be downloaded and viewed.
 
 ### Reproduction Evidence
 
-- **Commit showing reproduction:** [Link to commit in your fork]
-- **Screenshots/logs:** [If applicable]
+- **Commit showing reproduction:** [[Link to commit in your fork](https://github.com/Cao1224/session-desktop/commit/cc27ea28af72f8e941da5a69af051b02dcc3172a)]
+- **Screenshots/logs:**
+  <img width="861" height="560" alt="Screenshot 2026-06-14 at 2 01 48 PM" src="https://github.com/user-attachments/assets/29eb62b0-21d1-4f4d-ad32-8dab3ffb6397" />
+
 - **My findings:** The image displayed in the Lightbox is automatically scaled to fit the current window size. This behavior makes screenshots or images containing text difficult to read. Users currently have to maximize the application window or download the image and open it in an external viewer to inspect the image at full size. Based on feedback from a collaborator, the functionality should likely be implemented in the **Lightbox component**.
 
 ---
@@ -83,30 +85,90 @@ Select **Yes** so that the image can be downloaded and viewed.
 
 ### Analysis
 
-[Your analysis of the root cause - what's causing the issue?]
+The issue is caused by the current Lightbox implementation always constraining images with:
+
+* `objectFit: 'contain'`
+* `maxWidth: '80vw'`
+* `maxHeight: '80vh'`
+
+As a result, large screenshots and text-heavy images are scaled down and can become difficult to read.
+
+A naive attempt to remove the size limits (`maxWidth: none, maxHeight: none`) causes another problem: the image exceeds the viewport and obscures the Lightbox controls, making the interface difficult to use.
+
+In addition, the `<img>` element does not implement any interaction handlers, so users cannot zoom or pan the image. The existing code explicitly prevents clicks on the image from closing the Lightbox:
+```ts
+const onContainerClick = (event: MouseEvent<HTMLDivElement>) => {
+  if (renderedRef && event.target === renderedRef.current) {
+    return;
+  }
+
+  handleClose();
+};
+```
+This means image clicks are intentionally ignored and currently perform no action.
 
 ### Proposed Solution
 
-[High-level description of your fix approach]
+Introduce a zoom state inside the Lightbox component.
+
+By default, images remain in the existing "fit-to-screen" mode. Clicking the image toggles between:
+
+1. **Fit-to-screen mode**
+   * Existing behavior.
+   * Image constrained to 80% of the viewport.
+2. **Zoomed mode**
+   * Display the image at its actual size.
+   * Allow the image container to scroll so that oversized images do not cover the close and download buttons.
+   * Clicking the image again returns to fit-to-screen mode.
+
+This approach preserves the current UI while providing a simple way to inspect screenshots without downloading them.
 
 ### Implementation Plan
 
 Using UMPIRE framework (adapted):
 
-**Understand:** [Restate the problem]
+**Understand:** Images containing text are difficult to read because the Lightbox always scales them to fit the viewport. Users currently have no way to inspect an image at full resolution without saving it externally.
 
-**Match:** [What similar patterns/solutions exist in the codebase?]
+**Match:** 
 
-**Plan:** [Step-by-step implementation plan]
-1. [Modify file X to do Y]
-2. [Add function Z]
-3. [Update tests]
+The existing Lightbox already:
+* distinguishes clicks on the image from clicks on the background;
+* keeps the close and download buttons outside the image element;
+* uses React state and props, making it straightforward to add a zoom mode.
 
-**Implement:** [Link to your branch/commits as you work]
+**Plan:** 
+1. Modify `LightboxObject` to support a zoom state.
+2. Add an `onClick` handler to the `<img>` element.
+3. Toggle between:
+   * fit-to-screen mode (`80vw`, `80vh`);
+   * * actual-size mode.
+4. Update the image container to support scrolling when the image exceeds the viewport.
+5. Ensure the close and download buttons remain visible.
+6. Verify that videos and unsupported attachment types are unaffected.
+7. Add or update tests if similar Lightbox tests already exist.
+
+**Implement:** [[Link to your branch/commits as you work](https://github.com/Cao1224/session-desktop/commit/cc27ea28af72f8e941da5a69af051b02dcc3172a)]
+* Modify `Lightbox.tsx`.
+* Add a local `isZoomed` state.
+* Add image click handling.
+* Adjust container overflow behavior.
 
 **Review:** [Self-review checklist - does it follow the project's contribution guidelines?]
+- [ ] Preserve existing behavior by default.
+- [ ] Do not affect video attachments.
+- [ ] Keep close and download buttons accessible.
+- [ ] Avoid introducing breaking UI changes.
+- [ ] Follow existing React and TypeScript patterns.
 
 **Evaluate:** [How will you verify it works?]
+
+Verify that:
+* screenshots with text can be enlarged;
+* clicking toggles between zoomed and fit-to-screen modes;
+* large images remain navigable;
+* close and download buttons stay visible;
+* video attachments continue to behave normally;
+* clicking outside the image still closes the Lightbox.
 
 ---
 
