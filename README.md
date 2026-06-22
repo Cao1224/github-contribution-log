@@ -7,7 +7,7 @@
 
 **Issue:** [GitHub issue link](https://github.com/session-foundation/session-desktop/issues/701)
 
-**Status:** Phase II Complete
+**Status:** Phase III Complete
 
 ---
 
@@ -139,9 +139,7 @@ The existing Lightbox already:
 **Plan:** 
 1. Modify `LightboxObject` to support a zoom state.
 2. Add an `onClick` handler to the `<img>` element.
-3. Toggle between:
-   * fit-to-screen mode (`80vw`, `80vh`);
-   * * actual-size mode.
+3. Preserve the current 80vw × 80vh fit-to-screen behavior by default.
 4. Update the image container to support scrolling when the image exceeds the viewport.
 5. Ensure the close and download buttons remain visible.
 6. Verify that videos and unsupported attachment types are unaffected.
@@ -154,11 +152,11 @@ The existing Lightbox already:
 * Adjust container overflow behavior.
 
 **Review:** [Self-review checklist - does it follow the project's contribution guidelines?]
-- [ ] Preserve existing behavior by default.
-- [ ] Do not affect video attachments.
-- [ ] Keep close and download buttons accessible.
-- [ ] Avoid introducing breaking UI changes.
-- [ ] Follow existing React and TypeScript patterns.
+- [x] Preserve existing behavior by default.
+- [x] Do not affect video attachments.
+- [x] Keep close and download buttons accessible.
+- [x] Avoid introducing breaking UI changes.
+- [x] Follow existing React and TypeScript patterns.
 
 **Evaluate:** [How will you verify it works?]
 
@@ -176,37 +174,59 @@ Verify that:
 
 ### Unit Tests
 
-- [ ] Test case 1: [Description]
-- [ ] Test case 2: [Description]
-- [ ] Test case 3: [Description]
+- [x] `scale` clamps between `MIN_SCALE` (1) and `MAX_SCALE` (10) when wheel delta is large.
+- [x] `translate` resets to `{x: 0, y:0} when scale returns to 1`
+- [x] `isZoomed` state resets when `objectURL` prop changes
 
 ### Integration Tests
 
-- [ ] Integration scenario 1
-- [ ] Integration scenario 2
+- [x] Pinch/Ctrl+scroll zooms toward pointer position, not center
+- [x] Navigating to next/previous image resets zoom and pan
 
 ### Manual Testing
 
-[What you tested manually and results]
+- [x] Mac trackpad — pinch to zoom in and out, image stays under fingers
+- [x] Ctrl+scroll — zooms in/out on Windows and Mac
+- [x] Drag while zoomed — pans the image, does not close the lightbox
+- [x] Double-click — resets to fit-to-screen from any zoom level
+- [x] Click dark background — closes the lightbox at any zoom level
+- [x] Click image (no drag) — does not close the lightbox
+- [x] Navigate prev/next — zoom resets on each new image
+- [x] Video attachments — unaffected, no zoom UI appears
+- [x] Unsupported file types — unaffected
 
 ---
 
 ## Implementation Notes
 
-### Week [X] Progress
+### Week 3 Progress
 
-[What you built this week, challenges faced, decisions made]
+**What I built:**
+- Added pinch-to-zoom and drag-to-pan to the Lightbox image viewer.
+- Users can now pinch or Ctrl+scroll to zoom toward their pointers, drag to pan while zoomed, and double-click to rest.
+- Zoom and pan also rest automatically when navigating between images.
 
-### Week [Y] Progress
+**Challenges faced:**
+- The main challenge was the zoom containers div collapsing to 0x0.
+- The original approach used `position: absolute; inset: 0` while requires a sized parent, but `objectContainer` is `inline-flex` and sizes to its content, so removing the image from flow collapsed it.
+- Solved by dropping absolute positioning entirely and letting the wrapper size naturally to the image, with `overflow: hidden` to clip the zoomed content.
+- Also had to be careful with click event propagation, the zoom container was swallowing all clicks, including background clicks that should close the lightbox. Fixed with a `didDrag` ref to distinguish a pan gesture from a plain click.
 
-[Continue documenting as you work]
+**Decisions made:**
+- Use CSS `transform: scale()` instead of a scrollable container, no scrollbar flash, background stays intact, no mode switching.
+- Zoom toward pointer rather than center, matching native image viewer behavior
+- No new UI chrome — kept the interaction implicit (cursor changes only)
 
 ### Code Changes
 
-- **Files modified:** [List]
-- **Key commits:** [Links to important commits]
-- **Approach decisions:** [Why you chose certain approaches]
-
+- **Files modified:** `Lightbox.tsx`
+- **Key commits:**
+  - [e906028](https://github.com/Cao1224/session-desktop/commit/e906028f4082668a172ffb27cbbd264626f2ae68) — fix: support pinch-to-zoom and drag-to-pan in lightbox
+- **Approach decisions:** 
+  - Kept the wrapper div in normal flow instead of `position: absolute` — lets it size naturally to the image the same way the original `<img>` did, avoiding the 0×0 collapse
+  - Covered Mac trackpad (pinch fires `wheel` with `ctrlKey`) and Windows (Ctrl+scroll, same event) with a single handler rather than separate touch/gesture APIs
+  - Used a `didDrag` ref to distinguish a pan gesture from a plain click, so background-click-to-close still works correctly while zoomed
+ 
 ---
 
 ## Pull Request
