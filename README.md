@@ -208,13 +208,13 @@ Verify that:
 
 **Challenges faced:**
 - The main challenge was the zoom containers div collapsing to 0x0.
-- The original approach used `position: absolute; inset: 0` while requires a sized parent, but `objectContainer` is `inline-flex` and sizes to its content, so removing the image from flow collapsed it.
+- The original approach used `position: absolute; inset: 0` while requiring a sized parent, but `objectContainer` is `inline-flex` and sizes to its content, so removing the image from the flow collapsed it.
 - Solved by dropping absolute positioning entirely and letting the wrapper size naturally to the image, with `overflow: hidden` to clip the zoomed content.
-- Also had to be careful with click event propagation, the zoom container was swallowing all clicks, including background clicks that should close the lightbox. Fixed with a `didDrag` ref to distinguish a pan gesture from a plain click.
+- Also had to be careful with click event propagation; the zoom container was swallowing all clicks, including background clicks that should close the lightbox. Fixed with a `didDrag` ref to distinguish a pan gesture from a plain click.
 
 **Decisions made:**
 - Use CSS `transform: scale()` instead of a scrollable container, no scrollbar flash, background stays intact, no mode switching.
-- Zoom toward pointer rather than center, matching native image viewer behavior
+- Zoom toward the pointer rather than the center, matching native image viewer behavior
 - No new UI chrome — kept the interaction implicit (cursor changes only)
 
 ### Code Changes
@@ -223,7 +223,7 @@ Verify that:
 - **Key commits:**
   - [e906028](https://github.com/Cao1224/session-desktop/commit/e906028f4082668a172ffb27cbbd264626f2ae68) — fix: support pinch-to-zoom and drag-to-pan in lightbox
 - **Approach decisions:** 
-  - Kept the wrapper div in normal flow instead of `position: absolute` — lets it size naturally to the image the same way the original `<img>` did, avoiding the 0×0 collapse
+  - Kept the wrapper div in normal flow instead of `position: absolute` — lets it size naturally to the image, the same way the original `<img>` did, avoiding the 0×0 collapse
   - Covered Mac trackpad (pinch fires `wheel` with `ctrlKey`) and Windows (Ctrl+scroll, same event) with a single handler rather than separate touch/gesture APIs
   - Used a `didDrag` ref to distinguish a pan gesture from a plain click, so background-click-to-close still works correctly while zoomed
  
