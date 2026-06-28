@@ -7,13 +7,13 @@
 
 **Issue:** [GitHub issue link](https://github.com/session-foundation/session-desktop/issues/701)
 
-**Status:** Phase III Complete
+**Status:** Phase IV Complete
 
 ---
 
 ## Why I Chose This Issue
 
-I chose issue #701 because it is a user-facing feature request that improves the usability of Session Desktop when viewing image attachments. Many users share screenshots containing text, and the current image viewer can make that text difficult to read without downloading the image and opening it in another application. Adding zoom functionality would provide a smoother and more intuitive user experience.
+I chose issue #701 because it is a user-facing feature request that improves the usability of Session Desktop when viewing image attachments. Many users share screenshots containing text, and the current image viewer can make that text difficult to read without downloading the image and opening it in another application. Adding Zoom functionality would provide a smoother and more intuitive user experience.
 
 This issue aligns well with my experience building frontend applications using React and TypeScript. The maintainer also mentioned that the work should be done in the Lightbox component, which provides a clear starting point and makes the scope manageable for a first open-source contribution.
 
@@ -22,7 +22,7 @@ I'm interested in this issue because:
 2. The feature is self-contained within the image viewing experience, making it a good opportunity to learn the Session Desktop codebase.
 3. It directly impacts user experience and solves a practical problem that users have reported.
 
-From reading the issue discussion, I understand that the current behavior automatically scales images to fit the window, which can make text in screenshots difficult to read. The proposed solution is to add zoom functionality within the Lightbox so users can inspect images at full size without leaving the application.
+From reading the issue discussion, I understand that the current behavior automatically scales images to fit the window, which can make text in screenshots difficult to read. The proposed solution is to add zoom functionality within the Lightbox, allowing users to inspect images at full size without leaving the application.
 
 Through this contribution, I hope to learn more about Session Desktop's frontend architecture, image rendering workflow, and the process of collaborating with maintainers through code reviews and pull requests.
 
@@ -38,11 +38,11 @@ Users should be able to zoom in when viewing an image in the Lightbox. Clicking 
 
 ### Current Behavior
 
-Images displayed in the Lightbox are always scaled to fit the current window size. Clicking an opened image has no effect, and there is no built-in zoom capability. As a result, text inside screenshots or other detailed images may be unreadable unless the user enlarges the window or opens the image externally.
+Images displayed in the Lightbox are always scaled to fit the current window size. Clicking an open image has no effect, and there is no built-in zoom capability. As a result, text inside screenshots or other detailed images may be unreadable unless the user enlarges the window or opens the image externally.
 
 ### Affected Components
 
-The issue primarily affects the Lightbox component, which is responsible for displaying images and attachments in an enlarged view. The zoom interaction and image scaling behavior will likely need to be implemented within this component.
+The issue primarily affects the Lightbox component, which is responsible for displaying images and attachments in an enlarged view. The Zoom interaction and image scaling behavior will likely need to be implemented within this component.
 
 ---
 
@@ -109,7 +109,7 @@ This means image clicks are intentionally ignored and currently perform no actio
 
 ### Proposed Solution
 
-Introduce a zoom state inside the Lightbox component.
+Introduce a Zoom state inside the Lightbox component.
 
 By default, images remain in the existing "fit-to-screen" mode. Clicking the image toggles between:
 
@@ -239,7 +239,7 @@ Verify that:
 - [Date]: [Summary of feedback received]
 - [Date]: [How you addressed it]
 
-**Status:** [Awaiting review / Iterating / Approved / Merged]
+**Status:** Awaiting review
 
 ---
 
