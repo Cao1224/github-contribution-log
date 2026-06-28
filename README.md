@@ -24,7 +24,7 @@ I'm interested in this issue because:
 
 From reading the issue discussion, I understand that the current behavior automatically scales images to fit the window, which can make text in screenshots difficult to read. The proposed solution is to add zoom functionality within the Lightbox, allowing users to inspect images at full size without leaving the application.
 
-Through this contribution, I hope to learn more about Session Desktop's frontend architecture, image rendering workflow, and the process of collaborating with maintainers through code reviews and pull requests.
+Through this contribution, I want to learn more about Session Desktop's frontend architecture, image rendering workflow, and the process of collaborating with maintainers through code reviews and pull requests.
 
 ## Understanding the Issue
 
@@ -231,9 +231,46 @@ Verify that:
 
 ## Pull Request
 
-**PR Link:** [GitHub PR URL when submitted]
+**PR Link:** [GitHub PR URL](https://github.com/session-foundation/session-desktop/pull/1957)
 
-**PR Description:** [Draft or final PR description - much of the content above can be adapted]
+**PR Description:** 
+
+##### First-time contributor checklist:
+
+- [x] I have read the [README](https://github.com/session-foundation/session-desktop/blob/master/README.md) and [Contributor Guidelines](https://github.com/session-foundation/session-desktop/blob/master/CONTRIBUTING.md)
+
+##### Contributor checklist:
+
+- [x] My commits are in nice logical chunks with [good commit messages](http://chris.beams.io/posts/git-commit/)
+- [x] My changes are [rebased](https://blog.axosoft.com/golden-rule-of-rebasing-in-git/) on the latest [`dev`](https://github.com/session-foundation/session-desktop/tree/dev) branch
+- [x] A `yarn ready` run passes successfully ([more about tests here](https://github.com/session-foundation/session-desktop/blob/master/CONTRIBUTING.md#tests))
+- [x] My changes are ready to be shipped to users
+
+##### Description
+
+Adds pinch-to-zoom and drag-to-pan to the Lightbox image viewer. Images containing text are often difficult to read at fit-to-screen size, requiring users to download and open them externally to inspect the content.
+
+##### How it works:
+- Pinch or Ctrl+scroll to zoom in and out toward the pointer position
+- Drag to pan while zoomed
+- Double-click to reset to fit-to-screen
+- Zoom and pan reset automatically when navigating to the next or previous image
+- Video and unsupported file types are unaffected
+
+##### Manual testing performed:
+- [x] Pinch-to-zoom on Mac trackpad — zooms toward pointer
+- [x] Ctrl+scroll on Mac — zooms in and out
+- [x] Drag while zoomed — pans without closing the lightbox 
+- [x] Double-click — resets to fit-to-screen from any zoom level
+- [x] Click dark background — closes the lightbox at any zoom level
+- [x] Click image without dragging — lightbox stays open
+- [x] Navigate prev/next — zoom resets on each new image
+- [x] Video attachments — no change in behavior
+
+No new automated tests added — the meaningful behavior (gesture feel, pointer anchoring, click vs drag distinction) is covered by manual testing above.
+
+OS tested: macOS [14.8.7]
+
 
 **Maintainer Feedback:**
 - [Date]: [Summary of feedback received]
@@ -247,15 +284,20 @@ Verify that:
 
 ### Technical Skills Gained
 
-[What you learned technically]
+- How browser wheel events work for both Mac trackpad pinch (`ctrlKey: true`) and Ctrl+scroll — one handler covers both platforms
+- CSS `transform: scale()` doesn't affect layout, which is what makes the overflow clipping approach work cleanly
+- How `inline-flex` sizes to its content, and why `position: absolute; inset: 0` collapses to 0×0 when the parent has no intrinsic size
+- Pointer-anchored zoom math — adjusting translate so the point under the cursor stays fixed as scale changes
 
 ### Challenges Overcome
 
-[What was hard and how you solved it]
+- **0×0 div bug**: the zoom wrapper collapsed because `position: absolute; inset: 0` requires a sized containing block, but `objectContainer` is `inline-flex` and collapses when its only child is taken out of flow. Solved by removing absolute positioning and letting the wrapper size naturally to the image.
+- **Click events being swallowed**: a blanket `stopPropagation` on the zoom container was blocking background clicks from closing the lightbox. Solved with a `didDrag` ref to distinguish a pan gesture from a plain click, so only drag-end clicks are stopped.
 
 ### What I'd Do Differently Next Time
 
-[Reflection on your process]
+- Test the layout in the actual app earlier instead of reasoning about it. The 0×0 issue would have been caught immediately.
+- Think about event propagation before adding wrapper divs around interactive elements. It's easy to accidentally swallow clicks that the parent depends on.
 
 ---
 
