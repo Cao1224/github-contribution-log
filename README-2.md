@@ -1,9 +1,12 @@
 # Contribution 2: Attributes tab - Make details view after clicking in an attribute follow the page scroll
 
 **Contribution Number:** 2
-**Student:** [Your Name]  
-**Issue:** [GitHub issue link]  
-**Status:** [Phase I / Phase II / Phase III / Phase IV] [In Progress / Complete]
+
+**Student:** Yuancheng Cao
+
+**Issue:** [GitHub issue link](https://github.com/hawtio/hawtio-react/issues/2014)
+
+**Status:** Phase I
 
 ---
 
