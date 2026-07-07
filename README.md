@@ -6,13 +6,21 @@
 
 **Issue:** [GitHub issue link](https://github.com/hawtio/hawtio-react/issues/2014)
 
-**Status:** Phase I
+**Status:** Phase I Complete
 
 ---
 
 ## Why I Chose This Issue
 
-[1-2 paragraphs explaining why this issue interests you, how it matches your skills/learning goals, what you hope to learn]
+I chose issue #2014 because it aligns with my experience building React frontend applications and my goal of improving my understanding of UI behavior and user experience. The issue has a clear problem description and expected behavior, making it a good opportunity to contribute while learning more about the project's frontend architecture.
+
+I'm interested in this because:
+1. I've built React interfaces where component state, layout, and user interactions are important for creating a smooth user experience.
+2. The issue appears to be focused on a specific part of the UI, making it approachable while still requiring me to understand how the components work together.
+3. It gives me a chance to learn how this project handles page scrolling, component positioning, and layout behavior.
+4. Solving this issue will improve usability by making the attribute details easier to access without unnecessary scrolling.
+
+From reading the issue description, I understand that the current problem is that the attribute details remain at the top of the page after an attribute is selected, even if the user has scrolled further down. My contribution will help make the details panel stay visible near the user's current position, resulting in a smoother and more intuitive experience.
 
 ---
 
@@ -20,19 +28,22 @@
 
 ### Problem Description
 
-[In your own words, what's broken or missing?]
+When a user clicks an attribute in the Attributes tab after scrolling down the page, the attribute details panel stays fixed at the top of the page. As a result, the selected attribute appears to have no details unless the user manually scrolls back up.
 
 ### Expected Behavior
 
-[What should happen?]
+The attribute details panel should follow the user's current scroll position so that, after selecting an attribute, the details remain visible without requiring the user to scroll back to the top of the page.
 
 ### Current Behavior
 
-[What actually happens?]
+The details panel remains positioned at the top of the page regardless of the user's scroll position. If the user is far down the page, the details are outside the visible area, making it seem like nothing happened after clicking an attribute.
 
 ### Affected Components
 
-[Which parts of the codebase are involved?]
+Based on the issue description, the affected components are likely:
+* The Attributes tab UI, where attributes are listed.
+* The Attribute Details panel that displays information about the selected attribute.
+* The layout or styling responsible for positioning the details panel during page scrolling (possibly using CSS positioning such as `sticky` or `fixed`, or the parent container's layout).
 
 ---
 
