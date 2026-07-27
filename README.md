@@ -213,15 +213,41 @@ Verify the fix by:
 
 ## Pull Request
 
-**PR Link:** [GitHub PR URL when submitted]
+**PR Link:** [[GitHub PR URL when submitted]](https://github.com/hawtio/hawtio-react/pull/2182)
 
-**PR Description:** [Draft or final PR description - much of the content above can be adapted]
+**PR Description:**
+
+What does this PR do?: This PR fixes the scrolling behavior in the JMX Attributes tab by removing the nested scroll container created by `hasOverflowScroll` in `JmxContent.tsx`. With a single page scroll, the attribute details view now follows the page scroll as expected, making it easier to view attribute properties after selecting an attribute.
+
+Why was this PR needed? Issue #2013 reported that when the page was scrolled, and an attribute was selected, the details view remained positioned relative to an internal scroll container instead of following the page scroll. This required users to scroll back up to view the attribute details.
+
+During investigation, I traced the nested scrolling behavior to the `hasOverflowScroll` prop on the `PageSection` in `JmxContent.tsx`. Removing this prop eliminates the unnecessary nested scroll container while preserving the existing drawer implementation.
+
+What are the relevant issue numbers?: Closes #2014
+
+Screenshots / Recordings (if applicable)
+
+https://github.com/user-attachments/assets/787036cb-2428-4fd8-a062-42bcc0ed43d4
+
+Before: The JMX content area creates a nested scroll container. After selecting an attribute while the page is scrolled, the details view remains at the top of the inner scroll area.
+
+After: The nested scroll container is removed. The page uses a single scroll context. The attribute details view follows the page scroll as expected.
+
+Does this PR meet the acceptance criteria?
+
+- [x] Tests added for new/changed behavior
+- [x] All tests passing
+- [x] Follows project style guide
+- [x] No breaking changes introduced
+- [x] Documentation updated (not applicable)
+
+**Status:** Awaiting review
 
 **Maintainer Feedback:**
 - [Date]: [Summary of feedback received]
 - [Date]: [How you addressed it]
 
-**Status:** [Awaiting review / Iterating / Approved / Merged]
+**Status:** Awaiting review 
 
 ---
 
@@ -229,20 +255,19 @@ Verify the fix by:
 
 ### Technical Skills Gained
 
-[What you learned technically]
+- Gained a deeper understanding of how PatternFly's layout components, especially `PageSection`, manage scrolling behavior.
+- Improved my debugging skills by using Chrome DevTools to inspect the DOM structure and trace the source of nested scroll containers.
+- Learned to investigate UI issues by analyzing the rendered layout instead of focusing only on the React component logic.
+- Better understood how layout decisions can affect user experience, especially when working with drawers and scrollable containers.
 
 ### Challenges Overcome
 
-[What was hard and how you solved it]
+- The biggest challenge was identifying the root cause. Initially, I investigated `Attributes.tsx`, `AttributeModal.tsx`, and the `Drawer` component because the issue appeared when selecting an attribute.
+- After inspecting the generated DOM and CSS, I discovered that the nested scrolling behavior was actually introduced by the `hasOverflowScroll` prop in `JmxContent.tsx`.
+- Verifying the behavior by temporarily removing `hasOverflowScroll` confirmed that eliminating the nested scroll container resolved the issue without changing the drawer implementation.
 
 ### What I'd Do Differently Next Time
 
-[Reflection on your process]
-
----
-
-## Resources Used
-
-- [Link to helpful documentation]
-- [Tutorial or Stack Overflow post that helped]
-- [GitHub issues or discussions that helped]
+- I would inspect the rendered DOM and layout earlier instead of focusing primarily on the React components.
+- I would use browser developer tools sooner to identify which element is responsible for scrolling before modifying application code.
+- I would validate layout-related assumptions earlier with small experiments, which can help narrow down the root cause more efficiently.
