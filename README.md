@@ -71,15 +71,22 @@ Based on the issue description, the affected components are likely:
 
 ### Steps to Reproduce
 
-1. [Step 1]
-2. [Step 2]
-3. [Observed result]
+1. Start the `hawtio-react` frontend and connect it to a Spring Boot application with a Jolokia endpoint.
+2. Navigate to **JMX** and select an MBean with multiple attributes (e.g., `java.lang > Memory` or `java.lang > OperatingSystem`).
+3. Open the **Attributes** tab.
+4. Scroll down the page.
+5. Click on an attribute near the bottom of the list.
+6. **Observed Result:**
+   - The attribute details panel remains at the top of the page instead of appearing within the current viewport.
+   - Users must manually scroll back to the top to view the selected attribute's details, which makes the interface appear unresponsive when scrolled further down.
 
 ### Reproduction Evidence
 
-- **Commit showing reproduction:** [Link to commit in your fork]
+- **Commit showing reproduction:** [[Link to commit in your fork]](https://github.com/Cao1224/hawtio-react)
 - **Screenshots/logs:** [If applicable]
-- **My findings:** [What you discovered during reproduction]
+- **My findings:**
+  - The issue is reproducible on the latest `main` branch.
+  - Clicking an attribute updates the selected attribute, but the details panel stays fixed at the top of the page instead of following the current scroll position.
 
 ---
 
