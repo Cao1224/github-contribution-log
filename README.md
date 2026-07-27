@@ -51,6 +51,8 @@ Based on the issue description, the affected components are likely:
 
 ### Environment Setup
 
+Working branch: https://github.com/Cao1224/hawtio-react/tree/fix-issue-2014
+
 #### Setup Steps
 
 - Cloned the `hawtio-react` repository and installed project dependencies with `yarn install`.
@@ -79,6 +81,9 @@ Based on the issue description, the affected components are likely:
 6. **Observed Result:**
    - The attribute details panel remains at the top of the page instead of appearing within the current viewport.
    - Users must manually scroll back to the top to view the selected attribute's details, which makes the interface appear unresponsive when scrolled further down.
+7. **Expected Result:**
+   - The attribute details panel should appear within the user's current viewport after an attribute is selected.
+   - Users should be able to view the selected attribute's details without needing to scroll back to the top of the page.
 
 ### Reproduction Evidence
 
