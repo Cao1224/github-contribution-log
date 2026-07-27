@@ -99,67 +99,115 @@ Working branch: https://github.com/Cao1224/hawtio-react/tree/fix-issue-2014
 
 ### Analysis
 
-[Your analysis of the root cause - what's causing the issue?]
+The root cause is the nested scrolling behavior in the JMX content layout.
+
+`JmxContent.tsx` renders the main content inside a `PageSection` with the `hasOverflowScroll` prop, which creates an internal scroll container (`overflow: auto`). This results in two independent scroll containers: the page scroll and the JMX content scroll.
+
+When an attribute is selected, the details drawer is rendered within the inner scroll container. If the page has already been scrolled, the details panel stays positioned relative to the internal scroll container instead of following the page scroll, which matches the behavior described in the issue.
+
+Removing `hasOverflowScroll` eliminates the nested scroll container and allows the page to use a single scroll context, so the details view naturally follows the page scroll.
 
 ### Proposed Solution
 
-[High-level description of your fix approach]
+Remove the `hasOverflowScroll` prop from the `PageSection` in `packages/hawtio/src/plugins/jmx/JmxContent.tsx`.
+
+This removes the unnecessary nested scroll container and allows the JMX page to rely on the browser's page scroll. As a result, the attribute details drawer follows the page scroll naturally without modifying the drawer or attribute selection logic.
 
 ### Implementation Plan
 
 Using UMPIRE framework (adapted):
 
-**Understand:** [Restate the problem]
+**Understand:** The Attributes tab currently creates two independent scroll containers. When a user scrolls down the page and selects an attribute, the details view remains tied to the inner scroll container instead of following the page scroll, making it cumbersome to view the attribute details.
 
-**Match:** [What similar patterns/solutions exist in the codebase?]
+**Match:** During investigation, the nested scrolling was traced to the `hasOverflowScroll` prop on the `PageSection` in `JmxContent.tsx`. Neither `Attributes.tsx`, `AttributeModal.tsx`, nor the `Drawer` component explicitly creates the nested scrolling behavior. Removing `hasOverflowScroll` resolves the issue while keeping the existing drawer implementation unchanged.
 
 **Plan:** [Step-by-step implementation plan]
-1. [Modify file X to do Y]
-2. [Add function Z]
-3. [Update tests]
+1. Modify `packages/hawtio/src/plugins/jmx/JmxContent.tsx`.
+2. Remove the `hasOverflowScroll` prop from the `PageSection` with id `jmx-content-main`.
+3. Verify that:
+   - The Attributes tab uses a single-page scroll.
+   - The details drawer follows the page scroll after selecting an attribute.
+   - The Operations and Chart tabs continue to render and scroll correctly.
+4. Run the existing test suite to ensure no regressions are introduced.
 
-**Implement:** [Link to your branch/commits as you work]
+**Implement:** [[Link to your branch/commits as you work]](https://github.com/Cao1224/hawtio-react/tree/fix-issue-2014)
+- Create a feature branch.
+- Remove the `hasOverflowScroll` prop from `JmxContent.tsx`.
+- Test the change locally across the JMX plugin.
+- Commit the change and open a pull request.
+
 
 **Review:** [Self-review checklist - does it follow the project's contribution guidelines?]
+- [x] The fix is minimal and only addresses the reported issue.
+- [x] No unnecessary changes were made to `Attributes.tsx`, `AttributeModal.tsx`, or the `Drawer` components.
+- [x] The Operations and Chart tabs continue to function correctly.
+- [x] The implementation follows the project's coding style and contribution guidelines.
 
 **Evaluate:** [How will you verify it works?]
 
+Verify the fix by:
+
+1. Launching the application and navigating to the JMX plugin.
+2. Opening the **Attributes** tab.
+3. Scrolling down the page.
+4. Selecting an attribute near the bottom of the list.
+5. Confirming that the details view follows the page scroll without requiring the user to scroll back to the top.
+6. Verifying that the **Operations** and **Chart** tabs continue to behave correctly after the change.
 ---
 
 ## Testing Strategy
 
 ### Unit Tests
 
-- [ ] Test case 1: [Description]
-- [ ] Test case 2: [Description]
-- [ ] Test case 3: [Description]
+- [x] Verify `JmxContent` renders correctly after removing `hasOverflowScroll`.
+- [x] Verify the Attributes tab still renders the attribute table correctly.
+- [x] Verify the Operations and Chart tabs continue to render without layout regressions.
 
 ### Integration Tests
 
-- [ ] Integration scenario 1
-- [ ] Integration scenario 2
+- [x] Navigate through the JMX plugin and verify all tabs function correctly.
+- [x] Select an attribute after scrolling and confirm the details view follows the page scroll.
 
 ### Manual Testing
 
-[What you tested manually and results]
+- Reproduced the issue using the provided Spring Boot sample application.
+- Inspected the page layout using Chrome DevTools and identified nested scroll containers.
+- Verified that the inner scroll container was introduced by `PageSection` with the `hasOverflowScroll` prop.
+- Temporarily removed `hasOverflowScroll` and confirmed the nested scroll disappeared.
+- Confirmed that the attribute details view now follows the page scroll as described in the issue.
 
 ---
 
 ## Implementation Notes
 
-### Week [X] Progress
+### Week 2 Progress
 
-[What you built this week, challenges faced, decisions made]
+- Set up the Hawtio development environment and connected it to a Spring Boot application with Jolokia.
+- Reproduced the issue consistently on the Attributes tab.
+- Investigated `Attributes.tsx`, `AttributeModal.tsx`, and the drawer implementation to understand how the details panel is rendered.
+- Explored the layout hierarchy and identified that the page contained both an outer page scroll and an inner content scroll.
 
-### Week [Y] Progress
+### Week 3 Progress
 
-[Continue documenting as you work]
+- Investigated the JMX page layout and traced the nested scrolling behavior to `PageSection` in `JmxContent.tsx`.
+- Used Chrome DevTools to inspect the generated DOM and confirmed that `hasOverflowScroll` creates an additional scroll container.
+- Removed the `hasOverflowScroll` prop as a proof of concept and verified that the nested scroll was eliminated.
+- Confirmed that the attribute details view now follows the page scroll, matching the expected behavior described in the issue.
+- Planned to perform regression testing on the Operations and Chart tabs before submitting the final PR.
 
 ### Code Changes
 
-- **Files modified:** [List]
+- **Files modified:**
+  - `packages/hawtio/src/plugins/jmx/JmxContent.tsx`
+    - Removed the `hasOverflowScroll` prop from the `PageSection` with id `jmx-content-main`.
 - **Key commits:** [Links to important commits]
-- **Approach decisions:** [Why you chose certain approaches]
+  - [(1d5212e)](https://github.com/Cao1224/hawtio-react/commit/1d5212eff178e9b196eeab2ebeb927bc62717953) Remove `hasOverflowScroll` from `JmxContent.tsx` to eliminate the nested scroll container
+- **Approach decisions:**
+  - Initially investigated `Attributes.tsx`, `AttributeModal.tsx`, and the `Drawer` component since the issue appeared when selecting an attribute.
+  - Used Chrome DevTools to inspect the generated DOM and trace the source of the nested scrolling behavior.
+  - Determined that the nested scroll container originated from the `hasOverflowScroll` prop on `PageSection` rather than the drawer or attribute selection logic.
+  - Chose to remove `hasOverflowScroll` because it is a minimal change that addresses the root cause instead of introducing additional scrolling logic or modifying the drawer implementation.
+  - Verified that removing `hasOverflowScroll` resolves the issue by allowing the page to use a single scroll context, causing the details view to follow the page scroll as expected.
 
 ---
 
