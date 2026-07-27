@@ -6,7 +6,7 @@
 
 **Issue:** [GitHub issue link](https://github.com/hawtio/hawtio-react/issues/2014)
 
-**Status:** Phase III Complete
+**Status:** Phase IV Complete
 
 ---
 
