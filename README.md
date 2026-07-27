@@ -6,7 +6,7 @@
 
 **Issue:** [GitHub issue link](https://github.com/hawtio/hawtio-react/issues/2014)
 
-**Status:** Phase I Complete
+**Status:** Phase II Complete
 
 ---
 
@@ -83,7 +83,7 @@ Based on the issue description, the affected components are likely:
 ### Reproduction Evidence
 
 - **Commit showing reproduction:** [[Link to commit in your fork]](https://github.com/Cao1224/hawtio-react)
-- **Screenshots/logs:** [If applicable]
+- **Screenshots/logs:** ![Issue #2014 Reproduction](issue2014-issue.gif)
 - **My findings:**
   - The issue is reproducible on the latest `main` branch.
   - Clicking an attribute updates the selected attribute, but the details panel stays fixed at the top of the page instead of following the current scroll position.
