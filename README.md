@@ -51,7 +51,23 @@ Based on the issue description, the affected components are likely:
 
 ### Environment Setup
 
-[Notes on setting up your local development environment - challenges you faced, how you solved them]
+#### Setup Steps
+
+- Cloned the `hawtio-react` repository and installed project dependencies with `yarn install`.
+- Started the frontend development server using `yarn start`.
+- Set up a local Spring Boot application with a Jolokia endpoint to provide JMX data for testing.
+- Verified the Jolokia endpoint was running using `curl` before connecting it to the Hawtio frontend.
+
+#### Challenges & Solutions
+
+- **Challenge:** Initially tried to run `mvn spring-boot:run` from the `hawtio-react` repository, which resulted in a Maven plugin error because the repository is a React/Yarn workspace rather than a Spring Boot project.
+  - **Solution:** Started the frontend with `yarn start` and ran the Spring Boot application separately.
+
+- **Challenge:** The latest Spring Boot example depended on unpublished `5.3-SNAPSHOT` artifacts, causing Maven dependency resolution failures.
+  - **Solution:** Switched to a compatible Spring Boot example that uses released dependencies.
+
+- **Challenge:** The frontend initially failed to connect to the backend due to an incorrect Jolokia endpoint configuration.
+  - **Solution:** Verified the correct endpoint with `curl` and updated the connection settings to use `HTTP`, port `10001`, and `/actuator/jolokia`.
 
 ### Steps to Reproduce
 
